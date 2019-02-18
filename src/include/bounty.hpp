@@ -21,8 +21,6 @@ class [[eosio::contract]] bounty : public eosio::contract
         void insert(name from, asset quantity, int question_id, std::string memo)
         {
             require_auth(from);
-            bool can_place_bounty = true;
-
             eosio_assert(true, "it's not true");
 
             bounty_index bounties(_code, _code.value);
@@ -30,40 +28,31 @@ class [[eosio::contract]] bounty : public eosio::contract
             auto questionid_index = bounties.get_index<"questionid"_n>();
             auto itr = questionid_index.find(question_id);
 
-            if (itr != questionid_index.end())
-            {
-                //TODO: Add support for placing a bounty on another user's question
-                //
-                // a bounty is already placed for that question
-                can_place_bounty = false;
-            }
+            eosio_assert(itr == questionid_index.end(), "Bounty already exists for question");
+            eosio_assert(has_enough_funds(from, quantity), "Insufficient funds");
 
-            if (can_place_bounty && !has_enough_funds(from, quantity))
-            {
-                can_place_bounty = false;
-            }
+            //TODO: Add support for placing a bounty on another user's question
+            //
+            // a bounty is already placed for that question
 
-            if (can_place_bounty) 
-            {
-                // from == payer
-                bounties.emplace(from, [&](auto &row) {
-                    row.key = bounties.available_primary_key();
-                    row.questionId = question_id;
-                    row.eosWorth = quantity.amount;
-                });
+            // from == payer
+            bounties.emplace(from, [&](auto &row) {
+                row.key = bounties.available_primary_key();
+                row.questionId = question_id;
+                row.eosWorth = quantity.amount;
+            });
 
-                action(
-                    permission_level{from, "active"_n},
-                    "eosio.token"_n, 
-                    "transfer"_n,
-                    std::make_tuple(
-                        from,
-                        get_self(),
-                        quantity,
-                        memo
-                    )
-                ).send();
-            }
+            action(
+                permission_level{from, "active"_n},
+                "eosio.token"_n, 
+                "transfer"_n,
+                std::make_tuple(
+                    from,
+                    get_self(),
+                    quantity,
+                    memo
+                )
+            ).send();
         }
 
         void reclaim(name claimant, int bounty_id)
@@ -129,17 +118,7 @@ class [[eosio::contract]] bounty : public eosio::contract
         typedef multi_index<"bounties"_n, bounties, indexed_by<"questionid"_n, const_mem_fun<bounties, uint64_t, &bounties::by_question_id>>> bounty_index;
         typedef multi_index<"answers"_n, answers, indexed_by<"questionid"_n, const_mem_fun<answers, uint64_t, &answers::by_question_id>>> answer_index;
 
-        bool has_enough_funds(name account, asset quantity)
-        {
-            return (get_balance(account, quantity.symbol.code()) - quantity).amount >= 1;
-        }
-
-        asset get_balance(name account, symbol_code code)
-        {
-            return token::get_balance("eosio.token"_n, account, code);
-        }
 };
-
 
 // TODO: Add the other actions
 EOSIO_DISPATCH(bounty, (insert));
