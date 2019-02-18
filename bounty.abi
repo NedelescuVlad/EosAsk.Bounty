@@ -1,0 +1,99 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Mon Feb 18 11:49:08 2019",
+    "version": "eosio::abi/1.1",
+    "structs": [
+        {
+            "name": "answers",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint64"
+                },
+                {
+                    "name": "questionId",
+                    "type": "uint64"
+                },
+                {
+                    "name": "answererId",
+                    "type": "uint64"
+                },
+                {
+                    "name": "status",
+                    "type": "uint64"
+                },
+                {
+                    "name": "eosEarned",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "bounties",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint64"
+                },
+                {
+                    "name": "questionId",
+                    "type": "uint64"
+                },
+                {
+                    "name": "eosWorth",
+                    "type": "float64"
+                }
+            ]
+        },
+        {
+            "name": "insert",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "question_id",
+                    "type": "int32"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
+                }
+            ]
+        }
+    ],
+    "types": [],
+    "actions": [
+        {
+            "name": "insert",
+            "type": "insert",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "answers",
+            "type": "answers",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "bounties",
+            "type": "bounties",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": [],
+    "abi_extensions": []
+}
