@@ -28,7 +28,7 @@ void bounty::insert(name from, asset quantity, int question_id, std::string memo
     //
     // a bounty is already placed for that question
 
-    // from == payer
+    // payer == from
     bounties2.emplace(from, [&](auto &row) {
         row.key = bounties2.available_primary_key();
         row.questionId = question_id;

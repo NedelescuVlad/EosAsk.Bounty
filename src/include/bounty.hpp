@@ -34,6 +34,7 @@ class [[eosio::contract]] bounty : public eosio::contract
         [[eosio::action]]
         void rmans(name bounty_owner, int question_id, int answer_id, std::string reason);
 
+        // OLD bounties table
         // struct [[eosio::table]] bounties
         // {
             // uint64_t key;
