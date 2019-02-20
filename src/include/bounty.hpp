@@ -55,7 +55,7 @@ class [[eosio::contract]] bounty : public eosio::contract
             uint64_t by_question_id() const { return questionId; }
         };
 
-        struct [[eosio::table]] answers
+        struct [[eosio::table]] answers0
         {
             uint64_t key;
             uint64_t questionId;
@@ -69,7 +69,7 @@ class [[eosio::contract]] bounty : public eosio::contract
 
         // Defining the tables with typedef; indexing on question id for fast lookups by question id.
         typedef multi_index<"bounties2"_n, bounties2, indexed_by<"questionid"_n, const_mem_fun<bounties2, uint64_t, &bounties2::by_question_id>>> bounty_index2;
-        typedef multi_index<"answers"_n, answers, indexed_by<"questionid"_n, const_mem_fun<answers, uint64_t, &answers::by_question_id>>> answer_index2;
+        typedef multi_index<"answers0"_n, answers0, indexed_by<"questionid"_n, const_mem_fun<answers0, uint64_t, &answers0::by_question_id>>> answer_index2;
 
 };
 
