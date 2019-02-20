@@ -1,7 +1,21 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Mon Feb 18 15:48:41 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Feb 20 22:21:56 2019",
     "version": "eosio::abi/1.1",
     "structs": [
+        {
+            "name": "addans",
+            "base": "",
+            "fields": [
+                {
+                    "name": "answerer",
+                    "type": "name"
+                },
+                {
+                    "name": "question_id",
+                    "type": "int32"
+                }
+            ]
+        },
         {
             "name": "answers",
             "base": "",
@@ -29,7 +43,7 @@
             ]
         },
         {
-            "name": "bounties",
+            "name": "bounties2",
             "base": "",
             "fields": [
                 {
@@ -41,8 +55,8 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "eosWorth",
-                    "type": "float64"
+                    "name": "worth",
+                    "type": "asset"
                 }
             ]
         },
@@ -67,13 +81,110 @@
                     "type": "string"
                 }
             ]
+        },
+        {
+            "name": "payout",
+            "base": "",
+            "fields": [
+                {
+                    "name": "bounty_owner",
+                    "type": "name"
+                },
+                {
+                    "name": "answerer",
+                    "type": "name"
+                },
+                {
+                    "name": "question_id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "reclaim",
+            "base": "",
+            "fields": [
+                {
+                    "name": "claimant",
+                    "type": "name"
+                },
+                {
+                    "name": "question_id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "reclaimf",
+            "base": "",
+            "fields": [
+                {
+                    "name": "mod",
+                    "type": "name"
+                },
+                {
+                    "name": "bounty_owner",
+                    "type": "name"
+                },
+                {
+                    "name": "question_id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "rmans",
+            "base": "",
+            "fields": [
+                {
+                    "name": "bounty_owner",
+                    "type": "name"
+                },
+                {
+                    "name": "question_id",
+                    "type": "int32"
+                },
+                {
+                    "name": "answer_id",
+                    "type": "int32"
+                },
+                {
+                    "name": "reason",
+                    "type": "string"
+                }
+            ]
         }
     ],
     "types": [],
     "actions": [
         {
+            "name": "addans",
+            "type": "addans",
+            "ricardian_contract": ""
+        },
+        {
             "name": "insert",
             "type": "insert",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "payout",
+            "type": "payout",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "reclaim",
+            "type": "reclaim",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "reclaimf",
+            "type": "reclaimf",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rmans",
+            "type": "rmans",
             "ricardian_contract": ""
         }
     ],
@@ -86,8 +197,8 @@
             "key_types": []
         },
         {
-            "name": "bounties",
-            "type": "bounties",
+            "name": "bounties2",
+            "type": "bounties2",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
