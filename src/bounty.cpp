@@ -56,6 +56,21 @@ void bounty::reclaim(name claimant, uint64_t question_id)
 
     eosio_assert(itr != questionid_index.end(), "No bounty exists for that question");
 
+    auto worth = &itr->worth;
+    _bounties.erase(*itr);
+
+    action(
+        permission_level{get_self(), "active"_n},
+        "eosio.token"_n, 
+        "transfer"_n,
+        std::make_tuple(
+            get_self(),
+            claimant,
+            worth,
+            std::string("Bounty Reclaim")
+        )
+    ).send();
+
     //eosio_assert(itr == questionid_index.end(), "Bounty already exists for question");
 
     // Don't care about the answers in this first implementation; just allow the reclaim
