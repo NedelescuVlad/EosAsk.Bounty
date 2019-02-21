@@ -14,25 +14,26 @@ class [[eosio::contract]] bounty : public eosio::contract
     public:
         using contract::contract;
 
-        bounty(name receiver, name code, datastream<const char*> ds) : contract(receiver, code, ds) {}
+        bounty(name receiver, name code, datastream<const char*> ds) : contract(receiver, code, ds), _bounties(_code, _code.value), _answers(_code, _code.value)
+        {}
 
         [[eosio::action]]
-        void insert(name from, asset quantity, int question_id, std::string memo);
+        void insert(name from, asset quantity, uint64_t question_id, std::string memo);
 
         [[eosio::action]]
-        void reclaim(name claimant, int question_id);
+        void reclaim(name claimant, uint64_t question_id);
 
         [[eosio::action]]
-        void reclaimf(name mod, name bounty_owner, int question_id);
+        void reclaimf(name mod, name bounty_owner, uint64_t question_id);
 
         [[eosio::action]]
-        void payout(name bounty_owner, name answerer, int question_id);
+        void payout(name bounty_owner, name answerer, uint64_t question_id);
 
         [[eosio::action]]
-        void addans(name answerer, int question_id);
+        void addans(name answerer, uint64_t question_id);
 
         [[eosio::action]]
-        void rmans(name bounty_owner, int question_id, int answer_id, std::string reason);
+        void rmans(name bounty_owner, uint64_t question_id, uint64_t answer_id, std::string reason);
 
         // OLD bounties table
         // struct [[eosio::table]] bounties
@@ -55,7 +56,7 @@ class [[eosio::contract]] bounty : public eosio::contract
             uint64_t by_question_id() const { return questionId; }
         };
 
-        struct [[eosio::table]] answers0
+        struct [[eosio::table]] answers1
         {
             uint64_t key;
             uint64_t questionId;
@@ -68,9 +69,12 @@ class [[eosio::contract]] bounty : public eosio::contract
         };
 
         // Defining the tables with typedef; indexing on question id for fast lookups by question id.
-        typedef multi_index<"bounties2"_n, bounties2, indexed_by<"questionid"_n, const_mem_fun<bounties2, uint64_t, &bounties2::by_question_id>>> bounty_index2;
-        typedef multi_index<"answers0"_n, answers0, indexed_by<"questionid"_n, const_mem_fun<answers0, uint64_t, &answers0::by_question_id>>> answer_index2;
+        typedef multi_index<"bounties2"_n, bounties2, indexed_by<"questionid"_n, const_mem_fun<bounties2, uint64_t, &bounties2::by_question_id>>> bounty_index;
+        typedef multi_index<"answers1"_n, answers1, indexed_by<"questionid"_n, const_mem_fun<answers1, uint64_t, &answers1::by_question_id>>> answer_index;
 
+        // local instances of the multi index tables
+        bounty_index _bounties;
+        answer_index _answers;
 };
 
 // TODO: Add the other actions

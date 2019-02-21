@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Feb 20 22:30:56 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Feb 21 10:13:42 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -12,12 +12,12 @@
                 },
                 {
                     "name": "question_id",
-                    "type": "int32"
+                    "type": "uint64"
                 }
             ]
         },
         {
-            "name": "answers",
+            "name": "answers1",
             "base": "",
             "fields": [
                 {
@@ -74,7 +74,7 @@
                 },
                 {
                     "name": "question_id",
-                    "type": "int32"
+                    "type": "uint64"
                 },
                 {
                     "name": "memo",
@@ -96,7 +96,7 @@
                 },
                 {
                     "name": "question_id",
-                    "type": "int32"
+                    "type": "uint64"
                 }
             ]
         },
@@ -110,7 +110,7 @@
                 },
                 {
                     "name": "question_id",
-                    "type": "int32"
+                    "type": "uint64"
                 }
             ]
         },
@@ -128,7 +128,7 @@
                 },
                 {
                     "name": "question_id",
-                    "type": "int32"
+                    "type": "uint64"
                 }
             ]
         },
@@ -142,11 +142,11 @@
                 },
                 {
                     "name": "question_id",
-                    "type": "int32"
+                    "type": "uint64"
                 },
                 {
                     "name": "answer_id",
-                    "type": "int32"
+                    "type": "uint64"
                 },
                 {
                     "name": "reason",
@@ -190,8 +190,8 @@
     ],
     "tables": [
         {
-            "name": "answers",
-            "type": "answers",
+            "name": "answers1",
+            "type": "answers1",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
