@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Feb 22 15:51:45 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Feb 22 17:40:32 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -43,7 +43,7 @@
             ]
         },
         {
-            "name": "bounties2",
+            "name": "bounties3",
             "base": "",
             "fields": [
                 {
@@ -57,6 +57,10 @@
                 {
                     "name": "worth",
                     "type": "asset"
+                },
+                {
+                    "name": "owner",
+                    "type": "name"
                 }
             ]
         },
@@ -158,20 +162,6 @@
                     "type": "string"
                 }
             ]
-        },
-        {
-            "name": "rtest",
-            "base": "",
-            "fields": [
-                {
-                    "name": "from",
-                    "type": "name"
-                },
-                {
-                    "name": "quantity",
-                    "type": "asset"
-                }
-            ]
         }
     ],
     "types": [],
@@ -210,11 +200,6 @@
             "name": "rmans",
             "type": "rmans",
             "ricardian_contract": ""
-        },
-        {
-            "name": "rtest",
-            "type": "rtest",
-            "ricardian_contract": ""
         }
     ],
     "tables": [
@@ -226,8 +211,8 @@
             "key_types": []
         },
         {
-            "name": "bounties2",
-            "type": "bounties2",
+            "name": "bounties3",
+            "type": "bounties3",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

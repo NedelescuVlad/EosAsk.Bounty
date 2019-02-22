@@ -38,11 +38,12 @@ class [[eosio::contract]] bounty : public eosio::contract
         [[eosio::action]]
         void erase();
 
-        struct [[eosio::table]] bounties2
+        struct [[eosio::table]] bounties3
         {
             uint64_t key;
             uint64_t questionId;
             asset worth;
+            name owner;
 
             uint64_t primary_key() const { return key; }
             uint64_t by_question_id() const { return questionId; }
@@ -61,7 +62,7 @@ class [[eosio::contract]] bounty : public eosio::contract
         };
 
         // Defining the tables with typedef; indexing on question id for fast lookups by question id.
-        typedef multi_index<"bounties2"_n, bounties2, indexed_by<"questionid"_n, const_mem_fun<bounties2, uint64_t, &bounties2::by_question_id>>> bounty_index;
+        typedef multi_index<"bounties3"_n, bounties3, indexed_by<"questionid"_n, const_mem_fun<bounties3, uint64_t, &bounties3::by_question_id>>> bounty_index;
         typedef multi_index<"answers1"_n, answers1, indexed_by<"questionid"_n, const_mem_fun<answers1, uint64_t, &answers1::by_question_id>>> answer_index;
 
         // local instances of the multi index tables

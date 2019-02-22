@@ -32,6 +32,7 @@ void bounty::insert(name from, asset quantity, uint64_t question_id, std::string
         row.key = _bounties.available_primary_key();
         row.questionId = question_id;
         row.worth = quantity;
+        row.owner = from;
     });
 
     action(
@@ -55,6 +56,7 @@ void bounty::reclaim(name from, uint64_t question_id)
     auto itr = questionid_index.find(question_id);
 
     eosio_assert(itr != questionid_index.end(), "No bounty exists for that question");
+    eosio_assert(itr->owner == from, "You're not the owner of that bounty");
 
     asset quantity = itr->worth;
 
@@ -73,9 +75,6 @@ void bounty::reclaim(name from, uint64_t question_id)
     _bounties.erase(*itr);
 
     //eosio_assert(itr == questionid_index.end(), "Bounty already exists for question");
-
-    // Don't care about the answers in this first implementation; just allow the reclaim
-    //
     
     // read from the bounties table by the bounty id
     // if bounty is_active and claimant is the owner issue eosio.token transfer from "bounty" to "from"
