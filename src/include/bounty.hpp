@@ -35,16 +35,8 @@ class [[eosio::contract]] bounty : public eosio::contract
         [[eosio::action]]
         void rmans(name bounty_owner, uint64_t question_id, uint64_t answer_id, std::string reason);
 
-        // OLD bounties table
-        // struct [[eosio::table]] bounties
-        // {
-            // uint64_t key;
-            // uint64_t questionId;
-            // double eosWorth;
-
-            // uint64_t primary_key() const { return key; }
-            // uint64_t by_question_id() const { return questionId; }
-        // };
+        [[eosio::action]]
+        void erase();
 
         struct [[eosio::table]] bounties2
         {
@@ -79,4 +71,4 @@ class [[eosio::contract]] bounty : public eosio::contract
 
 // TODO: Add the other actions
 //
-EOSIO_DISPATCH(bounty, (insert)(reclaim)(reclaimf)(payout)(addans)(rmans));
+EOSIO_DISPATCH(bounty, (insert)(reclaim)(reclaimf)(payout)(addans)(rmans)(erase));

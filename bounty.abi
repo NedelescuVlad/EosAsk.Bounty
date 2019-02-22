@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Feb 21 10:25:47 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Feb 22 15:51:45 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -59,6 +59,11 @@
                     "type": "asset"
                 }
             ]
+        },
+        {
+            "name": "erase",
+            "base": "",
+            "fields": []
         },
         {
             "name": "insert",
@@ -153,6 +158,20 @@
                     "type": "string"
                 }
             ]
+        },
+        {
+            "name": "rtest",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                }
+            ]
         }
     ],
     "types": [],
@@ -160,6 +179,11 @@
         {
             "name": "addans",
             "type": "addans",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "erase",
+            "type": "erase",
             "ricardian_contract": ""
         },
         {
@@ -185,6 +209,11 @@
         {
             "name": "rmans",
             "type": "rmans",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rtest",
+            "type": "rtest",
             "ricardian_contract": ""
         }
     ],

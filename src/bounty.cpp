@@ -47,17 +47,16 @@ void bounty::insert(name from, asset quantity, uint64_t question_id, std::string
     ).send();
 }
 
-void bounty::reclaim(name claimant, uint64_t question_id)
+void bounty::reclaim(name from, uint64_t question_id)
 {
-    require_auth(claimant);
+    require_auth(from);
 
     auto questionid_index = _bounties.get_index<"questionid"_n>();
     auto itr = questionid_index.find(question_id);
 
     eosio_assert(itr != questionid_index.end(), "No bounty exists for that question");
 
-    auto worth = &itr->worth;
-    _bounties.erase(*itr);
+    asset quantity = itr->worth;
 
     action(
         permission_level{get_self(), "active"_n},
@@ -65,11 +64,13 @@ void bounty::reclaim(name claimant, uint64_t question_id)
         "transfer"_n,
         std::make_tuple(
             get_self(),
-            claimant,
-            worth,
-            std::string("Bounty Reclaim")
+            from,
+            quantity,
+            std::string("r")
         )
     ).send();
+
+    _bounties.erase(*itr);
 
     //eosio_assert(itr == questionid_index.end(), "Bounty already exists for question");
 
@@ -107,4 +108,19 @@ void bounty::rmans(name bounty_owner, uint64_t question_id, uint64_t answer_id, 
     // check if bounty_owner is the owner of bounty_id
     // check if answer.bounty_id == bounty_id 
     // mark answer as bad with given reason
+}
+
+void bounty::erase()
+{
+    require_auth(get_self());
+
+    for (auto bounty_itr = _bounties.begin(); bounty_itr != _bounties.end();)
+    {
+        bounty_itr = _bounties.erase(bounty_itr);
+    }
+
+    for (auto answer_itr = _answers.begin(); answer_itr != _answers.end();)
+    {
+        answer_itr = _answers.erase(answer_itr);
+    }
 }
