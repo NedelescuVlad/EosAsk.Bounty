@@ -52,13 +52,28 @@ void bounty::reclaim(name from, uint64_t question_id)
 {
     require_auth(from);
 
-    auto questionid_index = _bounties.get_index<"questionid"_n>();
-    auto itr = questionid_index.find(question_id);
+    auto bounties = _bounties.get_index<"questionid"_n>();
+    auto itr_bounties = bounties.find(question_id);
+    eosio_assert(itr_bounties != bounties.end(), "No bounty exists for that question");
+    eosio_assert(itr_bounties->owner == from, "You're not the owner of that bounty");
 
-    eosio_assert(itr != questionid_index.end(), "No bounty exists for that question");
-    eosio_assert(itr->owner == from, "You're not the owner of that bounty");
+    // All answers to that question must be status == 0 (Decided Bad)
+    auto answers = _answers.get_index<"questionid"_n>();
+    auto itr_answers = answers.find(question_id);
 
-    asset quantity = itr->worth;
+    bool has_only_bad_answers = true;
+    while (itr_answers != answers.end())
+    {
+        if (itr_answers->status != 0)
+        {
+            has_only_bad_answers = false;
+            break;
+        }
+        itr_answers = itr_answers++;
+    }
+    eosio_assert(has_only_bad_answers, "There are answers to this bounty that might be appropriate");
+
+    asset quantity = itr_bounties->worth;
 
     action(
         permission_level{get_self(), "active"_n},
@@ -72,12 +87,7 @@ void bounty::reclaim(name from, uint64_t question_id)
         )
     ).send();
 
-    _bounties.erase(*itr);
-
-    //eosio_assert(itr == questionid_index.end(), "Bounty already exists for question");
-    
-    // read from the bounties table by the bounty id
-    // if bounty is_active and claimant is the owner issue eosio.token transfer from "bounty" to "from"
+    _bounties.erase(*itr_bounties);
 }
 
 void bounty::reclaimf(name mod, name bounty_owner, uint64_t question_id)

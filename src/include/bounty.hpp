@@ -55,7 +55,7 @@ class [[eosio::contract]] bounty : public eosio::contract
             uint64_t questionId;
             uint64_t answererId;
             uint64_t status = 2; // 2 == "Undecided", 1 == "Awarded Bounty", 0 == "Decided Bad" (by bounty poster)
-            uint64_t eosEarned; // How much EOS has this answer received? Doesn't have to be status == 1 to have received eos
+            double eosEarned; // How much EOS has this answer received? Doesn't have to be status == 1 to have received eos
 
             uint64_t primary_key() const { return key; }
             uint64_t by_question_id() const { return key; }
