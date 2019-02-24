@@ -14,6 +14,8 @@ class [[eosio::contract]] bounty : public eosio::contract
     public:
         using contract::contract;
 
+        enum AnswerStatus {Undecided = 2, Awarded = 1, Incorrect = 0};
+
         bounty(name receiver, name code, datastream<const char*> ds) : contract(receiver, code, ds), _bounties(_code, _code.value), _answers(_code, _code.value)
         {}
 
@@ -24,16 +26,16 @@ class [[eosio::contract]] bounty : public eosio::contract
         void reclaim(name claimant, uint64_t question_id);
 
         [[eosio::action]]
-        void reclaimf(name mod, name bounty_owner, uint64_t question_id);
+        void reclaimf(name mod, name from, uint64_t question_id);
 
         [[eosio::action]]
-        void payout(name bounty_owner, name answerer, uint64_t question_id);
+        void payout(name from, uint64_t question_id, uint64_t answer_id);
 
         [[eosio::action]]
         void addans(name answerer, uint64_t question_id);
 
         [[eosio::action]]
-        void rmans(name bounty_owner, uint64_t question_id, uint64_t answer_id, std::string reason);
+        void rmans(name bounty_owner, uint64_t answer_id);
 
         [[eosio::action]]
         void erase();
@@ -49,13 +51,13 @@ class [[eosio::contract]] bounty : public eosio::contract
             uint64_t by_question_id() const { return questionId; }
         };
 
-        struct [[eosio::table]] answers1
+        struct [[eosio::table]] answers2
         {
             uint64_t key;
             uint64_t questionId;
-            uint64_t answererId;
-            uint64_t status = 2; // 2 == "Undecided", 1 == "Awarded Bounty", 0 == "Decided Bad" (by bounty poster)
-            double eosEarned; // How much EOS has this answer received? Doesn't have to be status == 1 to have received eos
+            name owner;
+            uint64_t status = AnswerStatus::Undecided;
+            double eosTipped = 0;
 
             uint64_t primary_key() const { return key; }
             uint64_t by_question_id() const { return key; }

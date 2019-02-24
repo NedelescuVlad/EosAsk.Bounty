@@ -9,7 +9,7 @@ asset get_balance(name account, symbol_code code)
 
 bool has_enough_funds(name account, asset quantity)
 {
-    return (get_balance(account, quantity.symbol.code()) - quantity).amount >= 1;
+    return (get_balance(account, quantity.symbol.code()) - quantity).amount;
 }
 
 void bounty::insert(name from, asset quantity, uint64_t question_id, std::string memo)
@@ -28,7 +28,7 @@ void bounty::insert(name from, asset quantity, uint64_t question_id, std::string
     // a bounty is already placed for that question
 
     // payer == from
-    _bounties.emplace(from, [&](auto &row) {
+    _bounties.emplace(get_self(), [&](auto &row) {
         row.key = _bounties.available_primary_key();
         row.questionId = question_id;
         row.worth = quantity;
@@ -57,14 +57,13 @@ void bounty::reclaim(name from, uint64_t question_id)
     eosio_assert(itr_bounties != bounties.end(), "No bounty exists for that question");
     eosio_assert(itr_bounties->owner == from, "You're not the owner of that bounty");
 
-    // All answers to that question must be status == 0 (Decided Bad)
     auto answers = _answers.get_index<"questionid"_n>();
     auto itr_answers = answers.find(question_id);
 
     bool has_only_bad_answers = true;
     while (itr_answers != answers.end())
     {
-        if (itr_answers->status != 0)
+        if (itr_answers->status != bounty::AnswerStatus::Incorrect)
         {
             has_only_bad_answers = false;
             break;
@@ -90,33 +89,82 @@ void bounty::reclaim(name from, uint64_t question_id)
     _bounties.erase(*itr_bounties);
 }
 
-void bounty::reclaimf(name mod, name bounty_owner, uint64_t question_id)
+// TODO: Only allow mods to use this action
+void bounty::reclaimf(name mod, name from, uint64_t question_id)
 {
-    // only moderators can do this action (special permissions should be enforced on this action)
-    // do the same as reclaim, but don't care about good_answers
+    require_auth(mod);
+
+    auto bounties = _bounties.get_index<"questionid"_n>();
+    auto itr_bounties = bounties.find(question_id);
+    eosio_assert(itr_bounties != bounties.end(), "No bounty exists for that question");
+    eosio_assert(itr_bounties->owner == from, "You're not the owner of that bounty");
+
+    asset quantity = itr_bounties->worth;
+
+    action(
+        permission_level{get_self(), "active"_n},
+        "eosio.token"_n, 
+        "transfer"_n,
+        std::make_tuple(
+            get_self(),
+            from,
+            quantity,
+            std::string("r")
+        )
+    ).send();
+
+    _bounties.erase(*itr_bounties);
 }
 
-void bounty::payout(name bounty_owner, name answerer, uint64_t question_id)
+void bounty::payout(name from, uint64_t question_id, uint64_t answer_id)
 {
-    require_auth(bounty_owner);
-    // read from the table and get the amount(qty) to payout
-    // if bounty is_active and bounty_owner is the owner issue eosio.token transfer from "from" to "to"
+    require_auth(from);
+
+    auto bounties = _bounties.get_index<"questionid"_n>();
+    auto itr_bounties = bounties.find(question_id);
+    eosio_assert(itr_bounties != bounties.end(), "No bounty exists for that question");
+    eosio_assert(itr_bounties->owner == from, "You're not the owner of that bounty");
+
+    auto itr_answers = _answers.find(answer_id);
+    eosio_assert(itr_answers != _answers.end(), "Invalid answer ID");
+
+    action(
+        permission_level{from, "active"_n},
+        "eosio.token"_n, 
+        "transfer"_n,
+        std::make_tuple(
+            from,
+            itr_answers->owner,
+            itr_bounties->worth,
+            "Bounty Payout"
+        )
+    ).send();
+
+    _answers.modify(itr_answers, get_self(), [&](auto &ans) {
+        ans.status = bounty::AnswerStatus::Awarded; // Awarded Bounty
+    });
 }
 
 void bounty::addans(name answerer, uint64_t question_id)
 {
     require_auth(answerer);
-    // read from the table and get the amount(qty) to payout
-    // if bounty is_active issue increment good_answers
-    // else do nothing
+
+    _answers.emplace(get_self(), [&](auto &row) {
+        row.key = _answers.available_primary_key();
+        row.questionId = question_id;
+        row.owner = answerer;
+    });
 }
 
-void bounty::rmans(name bounty_owner, uint64_t question_id, uint64_t answer_id, std::string reason)
+void bounty::rmans(name answerer, uint64_t answer_id)
 {
-    require_auth(bounty_owner);
-    // check if bounty_owner is the owner of bounty_id
-    // check if answer.bounty_id == bounty_id 
-    // mark answer as bad with given reason
+    require_auth(answerer);
+    auto itr = _answers.find(answer_id);
+
+    eosio_assert(itr != _answers.end(), "Invalid answer ID");
+    eosio_assert(itr->owner == answerer, "You do not own that answer");
+
+    _answers.erase(itr);
 }
 
 void bounty::erase()
