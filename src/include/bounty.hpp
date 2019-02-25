@@ -49,7 +49,7 @@ class [[eosio::contract]] bounty : public eosio::contract
         void ansrm(name bounty_owner, uint64_t answer_id);
 
         [[eosio::action]]
-        void ansbad(name bounty_owner, uint64_t answer_id, AnswerStatusReason reason);
+        void ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason);
 
         [[eosio::action]]
         void erase();
@@ -65,14 +65,14 @@ class [[eosio::contract]] bounty : public eosio::contract
             uint64_t by_question_id() const { return questionId; }
         };
 
-        struct [[eosio::table]] answers3
+        struct [[eosio::table]] answers4
         {
             uint64_t key;
             uint64_t questionId;
             double eosTipped = 0;
             name owner;
-            AnswerStatus status = AnswerStatus::Undecided;
-            AnswerStatusReason statusReason = AnswerStatusReason::NoReason; 
+            uint64_t status = AnswerStatus::Undecided;
+            uint64_t statusReason = AnswerStatusReason::NoReason; 
 
             uint64_t primary_key() const { return key; }
             uint64_t by_question_id() const { return key; }
@@ -80,7 +80,7 @@ class [[eosio::contract]] bounty : public eosio::contract
 
         // Defining the tables with typedef; indexing on question id for fast lookups by question id.
         typedef multi_index<"bounties3"_n, bounties3, indexed_by<"questionid"_n, const_mem_fun<bounties3, uint64_t, &bounties3::by_question_id>>> bounty_index;
-        typedef multi_index<"answers3"_n, answers3, indexed_by<"questionid"_n, const_mem_fun<answers3, uint64_t, &answers3::by_question_id>>> answer_index;
+        typedef multi_index<"answers4"_n, answers4, indexed_by<"questionid"_n, const_mem_fun<answers4, uint64_t, &answers4::by_question_id>>> answer_index;
 
         // local instances of the multi index tables
         bounty_index _bounties;

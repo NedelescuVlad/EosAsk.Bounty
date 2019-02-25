@@ -149,6 +149,10 @@ void bounty::ansadd(name answerer, uint64_t question_id)
 {
     require_auth(answerer);
 
+    auto bounties = _bounties.get_index<"questionid"_n>();
+    auto itr_bounties = bounties.find(question_id);
+    eosio_assert(itr_bounties != bounties.end(), "Invalid question ID");
+
     _answers.emplace(get_self(), [&](auto &row) {
         row.key = _answers.available_primary_key();
         row.questionId = question_id;
@@ -167,7 +171,7 @@ void bounty::ansrm(name answerer, uint64_t answer_id)
     _answers.erase(itr);
 }
 
-void bounty::ansbad(name bounty_owner, uint64_t answer_id, bounty::AnswerStatusReason reason)
+void bounty::ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason)
 {
     require_auth(bounty_owner);
 
