@@ -14,7 +14,18 @@ class [[eosio::contract]] bounty : public eosio::contract
     public:
         using contract::contract;
 
-        enum AnswerStatus {Undecided = 2, Awarded = 1, Incorrect = 0};
+        enum AnswerStatus 
+        {
+            Undecided = 0, 
+            Awarded = 1, 
+            Incorrect = 2
+        };
+
+        enum AnswerStatusReason 
+        {
+            NoReason = 0, // When the Answer isn't marked as Incorrect
+            Incomplete = 1
+        };
 
         bounty(name receiver, name code, datastream<const char*> ds) : contract(receiver, code, ds), _bounties(_code, _code.value), _answers(_code, _code.value)
         {}
@@ -32,10 +43,13 @@ class [[eosio::contract]] bounty : public eosio::contract
         void payout(name from, uint64_t question_id, uint64_t answer_id);
 
         [[eosio::action]]
-        void addans(name answerer, uint64_t question_id);
+        void ansadd(name answerer, uint64_t question_id);
 
         [[eosio::action]]
-        void rmans(name bounty_owner, uint64_t answer_id);
+        void ansrm(name bounty_owner, uint64_t answer_id);
+
+        [[eosio::action]]
+        void ansbad(name bounty_owner, uint64_t answer_id, AnswerStatusReason reason);
 
         [[eosio::action]]
         void erase();
@@ -51,13 +65,14 @@ class [[eosio::contract]] bounty : public eosio::contract
             uint64_t by_question_id() const { return questionId; }
         };
 
-        struct [[eosio::table]] answers2
+        struct [[eosio::table]] answers3
         {
             uint64_t key;
             uint64_t questionId;
-            name owner;
-            uint64_t status = AnswerStatus::Undecided;
             double eosTipped = 0;
+            name owner;
+            AnswerStatus status = AnswerStatus::Undecided;
+            AnswerStatusReason statusReason = AnswerStatusReason::NoReason; 
 
             uint64_t primary_key() const { return key; }
             uint64_t by_question_id() const { return key; }
@@ -65,7 +80,7 @@ class [[eosio::contract]] bounty : public eosio::contract
 
         // Defining the tables with typedef; indexing on question id for fast lookups by question id.
         typedef multi_index<"bounties3"_n, bounties3, indexed_by<"questionid"_n, const_mem_fun<bounties3, uint64_t, &bounties3::by_question_id>>> bounty_index;
-        typedef multi_index<"answers1"_n, answers1, indexed_by<"questionid"_n, const_mem_fun<answers1, uint64_t, &answers1::by_question_id>>> answer_index;
+        typedef multi_index<"answers3"_n, answers3, indexed_by<"questionid"_n, const_mem_fun<answers3, uint64_t, &answers3::by_question_id>>> answer_index;
 
         // local instances of the multi index tables
         bounty_index _bounties;
@@ -74,4 +89,4 @@ class [[eosio::contract]] bounty : public eosio::contract
 
 // TODO: Add the other actions
 //
-EOSIO_DISPATCH(bounty, (insert)(reclaim)(reclaimf)(payout)(addans)(rmans)(erase));
+EOSIO_DISPATCH(bounty, (insert)(reclaim)(reclaimf)(payout)(ansadd)(ansrm)(ansbad)(erase));

@@ -1,9 +1,9 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Sun Feb 24 19:17:57 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Mon Feb 25 13:46:41 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
-            "name": "addans",
+            "name": "ansadd",
             "base": "",
             "fields": [
                 {
@@ -17,7 +17,39 @@
             ]
         },
         {
-            "name": "answers1",
+            "name": "ansbad",
+            "base": "",
+            "fields": [
+                {
+                    "name": "bounty_owner",
+                    "type": "name"
+                },
+                {
+                    "name": "answer_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "reason",
+                    "type": "AnswerStatusReason"
+                }
+            ]
+        },
+        {
+            "name": "ansrm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "bounty_owner",
+                    "type": "name"
+                },
+                {
+                    "name": "answer_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "answers3",
             "base": "",
             "fields": [
                 {
@@ -29,16 +61,20 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "eosTipped",
+                    "type": "float64"
+                },
+                {
                     "name": "owner",
                     "type": "name"
                 },
                 {
                     "name": "status",
-                    "type": "uint64"
+                    "type": "AnswerStatus"
                 },
                 {
-                    "name": "eosTipped",
-                    "type": "float64"
+                    "name": "statusReason",
+                    "type": "AnswerStatusReason"
                 }
             ]
         },
@@ -140,27 +176,23 @@
                     "type": "uint64"
                 }
             ]
-        },
-        {
-            "name": "rmans",
-            "base": "",
-            "fields": [
-                {
-                    "name": "bounty_owner",
-                    "type": "name"
-                },
-                {
-                    "name": "answer_id",
-                    "type": "uint64"
-                }
-            ]
         }
     ],
     "types": [],
     "actions": [
         {
-            "name": "addans",
-            "type": "addans",
+            "name": "ansadd",
+            "type": "ansadd",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "ansbad",
+            "type": "ansbad",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "ansrm",
+            "type": "ansrm",
             "ricardian_contract": ""
         },
         {
@@ -187,17 +219,12 @@
             "name": "reclaimf",
             "type": "reclaimf",
             "ricardian_contract": ""
-        },
-        {
-            "name": "rmans",
-            "type": "rmans",
-            "ricardian_contract": ""
         }
     ],
     "tables": [
         {
-            "name": "answers1",
-            "type": "answers1",
+            "name": "answers3",
+            "type": "answers3",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

@@ -145,7 +145,7 @@ void bounty::payout(name from, uint64_t question_id, uint64_t answer_id)
     });
 }
 
-void bounty::addans(name answerer, uint64_t question_id)
+void bounty::ansadd(name answerer, uint64_t question_id)
 {
     require_auth(answerer);
 
@@ -156,7 +156,7 @@ void bounty::addans(name answerer, uint64_t question_id)
     });
 }
 
-void bounty::rmans(name answerer, uint64_t answer_id)
+void bounty::ansrm(name answerer, uint64_t answer_id)
 {
     require_auth(answerer);
     auto itr = _answers.find(answer_id);
@@ -165,6 +165,25 @@ void bounty::rmans(name answerer, uint64_t answer_id)
     eosio_assert(itr->owner == answerer, "You do not own that answer");
 
     _answers.erase(itr);
+}
+
+void bounty::ansbad(name bounty_owner, uint64_t answer_id, bounty::AnswerStatusReason reason)
+{
+    require_auth(bounty_owner);
+
+    auto itr_answers = _answers.find(answer_id);
+    eosio_assert(itr_answers != _answers.end(), "Invalid answer ID");
+
+    auto bounties = _bounties.get_index<"questionid"_n>();
+    auto itr_bounties = bounties.find(itr_answers->questionId);
+    eosio_assert(itr_bounties != bounties.end(), "Invalid bounty ID");
+
+    eosio_assert(itr_bounties->owner == bounty_owner, "You are not the owner of this bounty");
+
+    _answers.modify(itr_answers, get_self(), [&](auto &ans) {
+        ans.status = bounty::AnswerStatus::Incorrect; 
+        ans.statusReason = reason;
+    });
 }
 
 void bounty::erase()
