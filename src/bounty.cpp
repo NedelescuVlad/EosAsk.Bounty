@@ -146,17 +146,14 @@ void bounty::payout(name from, uint64_t question_id, uint64_t answer_id)
     bounties.erase(itr_bounties);
 }
 
-void bounty::ansadd(name answerer, uint64_t question_id)
+void bounty::ansadd(name answerer, uint64_t question_id, uint64_t answer_id)
 {
     require_auth(answerer);
-
-    auto bounties = _bounties.get_index<"questionid"_n>();
-    auto itr_bounties = bounties.find(question_id);
-    eosio_assert(itr_bounties != bounties.end(), "Invalid question ID");
 
     _answers.emplace(get_self(), [&](auto &row) {
         row.key = _answers.available_primary_key();
         row.questionId = question_id;
+        row.answerId = answer_id;
         row.owner = answerer;
     });
 }
@@ -164,12 +161,14 @@ void bounty::ansadd(name answerer, uint64_t question_id)
 void bounty::ansrm(name answerer, uint64_t answer_id)
 {
     require_auth(answerer);
-    auto itr = _answers.find(answer_id);
 
-    eosio_assert(itr != _answers.end(), "Invalid answer ID");
+    auto answers = _answers.get_index<"answerid"_n>();
+    auto itr = answers.find(answer_id);
+
+    eosio_assert(itr != answers.end(), "Invalid answer ID");
     eosio_assert(itr->owner == answerer, "You do not own that answer");
 
-    _answers.erase(itr);
+    answers.erase(itr);
 }
 
 void bounty::ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason)

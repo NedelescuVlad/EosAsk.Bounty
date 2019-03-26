@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Mar 26 10:02:32 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Mar 26 20:34:46 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -12,6 +12,10 @@
                 },
                 {
                     "name": "question_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "answer_id",
                     "type": "uint64"
                 }
             ]
@@ -49,7 +53,7 @@
             ]
         },
         {
-            "name": "answers4",
+            "name": "answers5",
             "base": "",
             "fields": [
                 {
@@ -58,6 +62,10 @@
                 },
                 {
                     "name": "questionId",
+                    "type": "uint64"
+                },
+                {
+                    "name": "answerId",
                     "type": "uint64"
                 },
                 {
@@ -223,8 +231,8 @@
     ],
     "tables": [
         {
-            "name": "answers4",
-            "type": "answers4",
+            "name": "answers5",
+            "type": "answers5",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

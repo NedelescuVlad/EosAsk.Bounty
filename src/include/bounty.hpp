@@ -43,7 +43,7 @@ class [[eosio::contract]] bounty : public eosio::contract
         void payout(name from, uint64_t question_id, uint64_t answer_id);
 
         [[eosio::action]]
-        void ansadd(name answerer, uint64_t question_id);
+        void ansadd(name answerer, uint64_t question_id, uint64_t answer_id);
 
         [[eosio::action]]
         void ansrm(name bounty_owner, uint64_t answer_id);
@@ -65,28 +65,31 @@ class [[eosio::contract]] bounty : public eosio::contract
             uint64_t by_question_id() const { return questionId; }
         };
 
-        struct [[eosio::table]] answers4
+        struct [[eosio::table]] answers5
         {
             uint64_t key;
             uint64_t questionId;
+            uint64_t answerId;
             double eosTipped = 0;
             name owner;
             uint64_t status = AnswerStatus::Undecided;
             uint64_t statusReason = AnswerStatusReason::NoReason; 
 
             uint64_t primary_key() const { return key; }
-            uint64_t by_question_id() const { return key; }
+            uint64_t by_question_id() const { return questionId; }
+            uint64_t by_answer_id() const { return answerId; }
         };
 
         // Defining the tables with typedef; indexing on question id for fast lookups by question id.
         typedef multi_index<"bounties3"_n, bounties3, indexed_by<"questionid"_n, const_mem_fun<bounties3, uint64_t, &bounties3::by_question_id>>> bounty_index;
-        typedef multi_index<"answers4"_n, answers4, indexed_by<"questionid"_n, const_mem_fun<answers4, uint64_t, &answers4::by_question_id>>> answer_index;
+        typedef multi_index<"answers5"_n, answers5, 
+                indexed_by<"questionid"_n, const_mem_fun<answers5, uint64_t, &answers5::by_question_id>>,
+                indexed_by<"answerid"_n, const_mem_fun<answers5, uint64_t, &answers5::by_answer_id>>>
+                    answer_index;
 
         // local instances of the multi index tables
         bounty_index _bounties;
         answer_index _answers;
 };
 
-// TODO: Add the other actions
-//
 EOSIO_DISPATCH(bounty, (insert)(reclaim)(reclaimf)(payout)(ansadd)(ansrm)(ansbad)(erase));
