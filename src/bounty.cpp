@@ -150,6 +150,10 @@ void bounty::ansadd(name answerer, uint64_t question_id, uint64_t answer_id)
 {
     require_auth(answerer);
 
+    auto answers = _answers.get_index<"answerid"_n>();
+    auto itr = answers.find(answer_id);
+    eosio_assert(itr != answers.end(), "Answer already added");
+
     _answers.emplace(get_self(), [&](auto &row) {
         row.key = _answers.available_primary_key();
         row.questionId = question_id;
