@@ -129,20 +129,21 @@ void bounty::payout(name from, uint64_t question_id, uint64_t answer_id)
     eosio_assert(itr_answers != _answers.end(), "Invalid answer ID");
 
     action(
-        permission_level{from, "active"_n},
+        permission_level{get_self(), "active"_n},
         "eosio.token"_n, 
         "transfer"_n,
         std::make_tuple(
-            from,
+            get_self(),
             itr_answers->owner,
             itr_bounties->worth,
-            "Bounty Payout"
+            std::string("Bounty Payout")
         )
     ).send();
 
     _answers.modify(itr_answers, get_self(), [&](auto &ans) {
         ans.status = bounty::AnswerStatus::Awarded; // Awarded Bounty
     });
+    bounties.erase(itr_bounties);
 }
 
 void bounty::ansadd(name answerer, uint64_t question_id)
@@ -190,9 +191,10 @@ void bounty::ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason)
     });
 }
 
+//TODO: Remove this action as it is only for local testing
 void bounty::erase()
 {
-    require_auth(get_self());
+    // require_auth(get_self());
 
     for (auto bounty_itr = _bounties.begin(); bounty_itr != _bounties.end();)
     {
