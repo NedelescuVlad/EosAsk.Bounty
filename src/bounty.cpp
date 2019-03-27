@@ -12,7 +12,7 @@ bool has_enough_funds(name account, asset quantity)
     return (get_balance(account, quantity.symbol.code()) - quantity).amount;
 }
 
-void bounty::insert(name from, asset quantity, uint64_t question_id, std::string memo)
+void bounty::bountyadd(name from, asset quantity, uint64_t question_id, std::string memo)
 {
     require_auth(from);
 
@@ -127,6 +127,7 @@ void bounty::payout(name from, uint64_t question_id, uint64_t answer_id)
 
     auto itr_answers = _answers.find(answer_id);
     eosio_assert(itr_answers != _answers.end(), "Invalid answer ID");
+    eosio_assert(itr_bounties -> owner != from, "Cannout payout your own answer");
 
     action(
         permission_level{get_self(), "active"_n},
@@ -152,7 +153,7 @@ void bounty::ansadd(name answerer, uint64_t question_id, uint64_t answer_id)
 
     auto answers = _answers.get_index<"answerid"_n>();
     auto itr = answers.find(answer_id);
-    eosio_assert(itr != answers.end(), "Answer already added");
+    eosio_assert(itr == answers.end(), "Answer already added");
 
     _answers.emplace(get_self(), [&](auto &row) {
         row.key = _answers.available_primary_key();
@@ -179,8 +180,9 @@ void bounty::ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason)
 {
     require_auth(bounty_owner);
 
-    auto itr_answers = _answers.find(answer_id);
-    eosio_assert(itr_answers != _answers.end(), "Invalid answer ID");
+    auto answers = _answers.get_index<"answerid"_n>();
+    auto itr_answers = answers.find(answer_id);
+    eosio_assert(itr_answers != answers.end(), "Invalid answer ID");
 
     auto bounties = _bounties.get_index<"questionid"_n>();
     auto itr_bounties = bounties.find(itr_answers->questionId);
@@ -188,7 +190,7 @@ void bounty::ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason)
 
     eosio_assert(itr_bounties->owner == bounty_owner, "You are not the owner of this bounty");
 
-    _answers.modify(itr_answers, get_self(), [&](auto &ans) {
+    answers.modify(itr_answers, get_self(), [&](auto &ans) {
         ans.status = bounty::AnswerStatus::Incorrect; 
         ans.statusReason = reason;
     });

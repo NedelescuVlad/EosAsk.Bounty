@@ -23,15 +23,14 @@ class [[eosio::contract]] bounty : public eosio::contract
 
         enum AnswerStatusReason 
         {
-            NoReason = 0, // When the Answer isn't marked as Incorrect
-            Incomplete = 1
+            Default = 0, // Specific reasons are not supported at this time
         };
 
         bounty(name receiver, name code, datastream<const char*> ds) : contract(receiver, code, ds), _bounties(_code, _code.value), _answers(_code, _code.value)
         {}
 
         [[eosio::action]]
-        void insert(name from, asset quantity, uint64_t question_id, std::string memo);
+        void bountyadd(name from, asset quantity, uint64_t question_id, std::string memo);
 
         [[eosio::action]]
         void reclaim(name claimant, uint64_t question_id);
@@ -73,7 +72,7 @@ class [[eosio::contract]] bounty : public eosio::contract
             double eosTipped = 0;
             name owner;
             uint64_t status = AnswerStatus::Undecided;
-            uint64_t statusReason = AnswerStatusReason::NoReason; 
+            uint64_t statusReason = AnswerStatusReason::Default; 
 
             uint64_t primary_key() const { return key; }
             uint64_t by_question_id() const { return questionId; }
@@ -92,4 +91,4 @@ class [[eosio::contract]] bounty : public eosio::contract
         answer_index _answers;
 };
 
-EOSIO_DISPATCH(bounty, (insert)(reclaim)(reclaimf)(payout)(ansadd)(ansrm)(ansbad)(erase));
+EOSIO_DISPATCH(bounty, (bountyadd)(reclaim)(reclaimf)(payout)(ansadd)(ansrm)(ansbad)(erase));
