@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Mar 27 22:27:58 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Mar 28 13:21:43 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -53,7 +53,25 @@
             ]
         },
         {
-            "name": "answers5",
+            "name": "anstip",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "answer_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "answers11",
             "base": "",
             "fields": [
                 {
@@ -70,7 +88,7 @@
                 },
                 {
                     "name": "eosTipped",
-                    "type": "float64"
+                    "type": "asset"
                 },
                 {
                     "name": "owner",
@@ -204,6 +222,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "anstip",
+            "type": "anstip",
+            "ricardian_contract": ""
+        },
+        {
             "name": "bountyadd",
             "type": "bountyadd",
             "ricardian_contract": ""
@@ -231,8 +254,8 @@
     ],
     "tables": [
         {
-            "name": "answers5",
-            "type": "answers5",
+            "name": "answers11",
+            "type": "answers11",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

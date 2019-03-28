@@ -125,9 +125,10 @@ void bounty::payout(name from, uint64_t question_id, uint64_t answer_id)
     eosio_assert(itr_bounties != bounties.end(), "No bounty exists for that question");
     eosio_assert(itr_bounties->owner == from, "You're not the owner of that bounty");
 
-    auto itr_answers = _answers.find(answer_id);
-    eosio_assert(itr_answers != _answers.end(), "Invalid answer ID");
-    eosio_assert(itr_bounties -> owner != from, "Cannout payout your own answer");
+    auto answers = _answers.get_index<"answerid"_n>();
+    auto itr_answers = answers.find(answer_id);
+    eosio_assert(itr_answers != answers.end(), "Invalid answer ID");
+    eosio_assert(itr_bounties -> owner != itr_answers->owner, "Cannout payout your own answer");
 
     action(
         permission_level{get_self(), "active"_n},
@@ -141,7 +142,7 @@ void bounty::payout(name from, uint64_t question_id, uint64_t answer_id)
         )
     ).send();
 
-    _answers.modify(itr_answers, get_self(), [&](auto &ans) {
+    answers.modify(itr_answers, get_self(), [&](auto &ans) {
         ans.status = bounty::AnswerStatus::Awarded; // Awarded Bounty
     });
     bounties.erase(itr_bounties);
@@ -160,6 +161,19 @@ void bounty::ansadd(name answerer, uint64_t question_id, uint64_t answer_id)
         row.questionId = question_id;
         row.answerId = answer_id;
         row.owner = answerer;
+    });
+}
+
+void bounty::anstip(name from, asset quantity, uint64_t answer_id) 
+{
+    require_auth(from);
+
+    auto answers = _answers.get_index<"answerid"_n>();
+    auto itr_answers = answers.find(answer_id);
+    eosio_assert(itr_answers != answers.end(), "Invalid answer ID");
+
+    answers.modify(itr_answers, get_self(), [&](auto &ans) {
+        ans.eosTipped = ans.eosTipped + quantity; 
     });
 }
 
