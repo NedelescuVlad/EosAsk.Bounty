@@ -174,7 +174,14 @@ void bounty::anstip(name from, asset quantity, uint64_t answer_id)
     eosio_assert(from != itr_answers->owner, "Cannot tip your own answer");
 
     answers.modify(itr_answers, get_self(), [&](auto &ans) {
-        ans.eosTipped = ans.eosTipped + quantity; 
+        if (ans.eosTipped.amount == 0)
+        {
+            ans.eosTipped = quantity;
+        }
+        else 
+        {
+            ans.eosTipped = ans.eosTipped + quantity; 
+        }
     });
 }
 
