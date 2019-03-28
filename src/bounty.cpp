@@ -61,17 +61,15 @@ void bounty::reclaim(name from, uint64_t question_id)
     auto itr_answers = answers.find(question_id);
 
     bool has_only_bad_answers = true;
-    while (itr_answers != answers.end())
+    for (auto &answer : _answers) 
     {
-        if (itr_answers->status != bounty::AnswerStatus::Incorrect)
+        if (answer.questionId == question_id && answer.status != AnswerStatus::Incorrect) 
         {
             has_only_bad_answers = false;
-            break;
         }
-        itr_answers = itr_answers++;
     }
-    eosio_assert(has_only_bad_answers, "There are answers to this bounty that might be appropriate");
 
+    eosio_assert(has_only_bad_answers, "There are answers to this bounty that might be appropriate");
     asset quantity = itr_bounties->worth;
 
     action(
