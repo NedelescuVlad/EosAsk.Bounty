@@ -171,6 +171,7 @@ void bounty::anstip(name from, asset quantity, uint64_t answer_id)
     auto answers = _answers.get_index<"answerid"_n>();
     auto itr_answers = answers.find(answer_id);
     eosio_assert(itr_answers != answers.end(), "Invalid answer ID");
+    eosio_assert(from != itr_answers->owner, "Cannot tip your own answer");
 
     answers.modify(itr_answers, get_self(), [&](auto &ans) {
         ans.eosTipped = ans.eosTipped + quantity; 
