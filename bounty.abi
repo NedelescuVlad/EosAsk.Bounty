@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Mar 28 19:44:54 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Apr  3 17:10:48 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -39,20 +39,6 @@
             ]
         },
         {
-            "name": "ansrm",
-            "base": "",
-            "fields": [
-                {
-                    "name": "bounty_owner",
-                    "type": "name"
-                },
-                {
-                    "name": "answer_id",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
             "name": "anstip",
             "base": "",
             "fields": [
@@ -71,7 +57,7 @@
             ]
         },
         {
-            "name": "answers11",
+            "name": "answers12",
             "base": "",
             "fields": [
                 {
@@ -149,11 +135,6 @@
             ]
         },
         {
-            "name": "erase",
-            "base": "",
-            "fields": []
-        },
-        {
             "name": "payout",
             "base": "",
             "fields": [
@@ -184,24 +165,6 @@
                     "type": "uint64"
                 }
             ]
-        },
-        {
-            "name": "reclaimf",
-            "base": "",
-            "fields": [
-                {
-                    "name": "mod",
-                    "type": "name"
-                },
-                {
-                    "name": "from",
-                    "type": "name"
-                },
-                {
-                    "name": "question_id",
-                    "type": "uint64"
-                }
-            ]
         }
     ],
     "types": [],
@@ -217,11 +180,6 @@
             "ricardian_contract": ""
         },
         {
-            "name": "ansrm",
-            "type": "ansrm",
-            "ricardian_contract": ""
-        },
-        {
             "name": "anstip",
             "type": "anstip",
             "ricardian_contract": ""
@@ -229,11 +187,6 @@
         {
             "name": "bountyadd",
             "type": "bountyadd",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "erase",
-            "type": "erase",
             "ricardian_contract": ""
         },
         {
@@ -245,17 +198,12 @@
             "name": "reclaim",
             "type": "reclaim",
             "ricardian_contract": ""
-        },
-        {
-            "name": "reclaimf",
-            "type": "reclaimf",
-            "ricardian_contract": ""
         }
     ],
     "tables": [
         {
-            "name": "answers11",
-            "type": "answers11",
+            "name": "answers12",
+            "type": "answers12",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

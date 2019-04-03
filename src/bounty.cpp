@@ -57,12 +57,14 @@ void bounty::reclaim(name from, uint64_t question_id)
     eosio_assert(itr_bounties != bounties.end(), "No bounty exists for that question");
     eosio_assert(itr_bounties->owner == from, "You're not the owner of that bounty");
 
-    auto answers = _answers.get_index<"questionid"_n>();
-    auto itr_answers = answers.find(question_id);
-
     bool has_only_bad_answers = true;
     for (auto &answer : _answers) 
     {
+        if (from == answer.owner) 
+        {
+            continue;
+        }
+
         if (answer.questionId == question_id && answer.status != AnswerStatus::Incorrect) 
         {
             has_only_bad_answers = false;
@@ -70,33 +72,6 @@ void bounty::reclaim(name from, uint64_t question_id)
     }
 
     eosio_assert(has_only_bad_answers, "There are answers to this bounty that might be appropriate");
-    asset quantity = itr_bounties->worth;
-
-    action(
-        permission_level{get_self(), "active"_n},
-        "eosio.token"_n, 
-        "transfer"_n,
-        std::make_tuple(
-            get_self(),
-            from,
-            quantity,
-            std::string("r")
-        )
-    ).send();
-
-    _bounties.erase(*itr_bounties);
-}
-
-// TODO: Only allow mods to use this action
-void bounty::reclaimf(name mod, name from, uint64_t question_id)
-{
-    require_auth(mod);
-
-    auto bounties = _bounties.get_index<"questionid"_n>();
-    auto itr_bounties = bounties.find(question_id);
-    eosio_assert(itr_bounties != bounties.end(), "No bounty exists for that question");
-    eosio_assert(itr_bounties->owner == from, "You're not the owner of that bounty");
-
     asset quantity = itr_bounties->worth;
 
     action(
@@ -183,19 +158,6 @@ void bounty::anstip(name from, asset quantity, uint64_t answer_id)
     });
 }
 
-void bounty::ansrm(name answerer, uint64_t answer_id)
-{
-    require_auth(answerer);
-
-    auto answers = _answers.get_index<"answerid"_n>();
-    auto itr = answers.find(answer_id);
-
-    eosio_assert(itr != answers.end(), "Invalid answer ID");
-    eosio_assert(itr->owner == answerer, "You do not own that answer");
-
-    answers.erase(itr);
-}
-
 void bounty::ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason)
 {
     require_auth(bounty_owner);
@@ -214,20 +176,4 @@ void bounty::ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason)
         ans.status = bounty::AnswerStatus::Incorrect; 
         ans.statusReason = reason;
     });
-}
-
-//TODO: Remove this action as it is only for local testing
-void bounty::erase()
-{
-    // require_auth(get_self());
-
-    for (auto bounty_itr = _bounties.begin(); bounty_itr != _bounties.end();)
-    {
-        bounty_itr = _bounties.erase(bounty_itr);
-    }
-
-    for (auto answer_itr = _answers.begin(); answer_itr != _answers.end();)
-    {
-        answer_itr = _answers.erase(answer_itr);
-    }
 }
