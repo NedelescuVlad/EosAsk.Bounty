@@ -177,3 +177,18 @@ void bounty::ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason)
         ans.statusReason = reason;
     });
 }
+
+void bounty::erase()
+{
+    require_auth(get_self());
+
+    for (auto bounty_itr = _bounties.begin(); bounty_itr != _bounties.end();)
+    {
+        bounty_itr = _bounties.erase(bounty_itr);
+    }
+
+    for (auto answer_itr = _answers.begin(); answer_itr != _answers.end();)
+    {
+        answer_itr = _answers.erase(answer_itr);
+    }
+}

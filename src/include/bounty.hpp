@@ -47,6 +47,9 @@ class [[eosio::contract]] bounty : public eosio::contract
         [[eosio::action]]
         void ansbad(name bounty_owner, uint64_t answer_id, uint64_t reason);
 
+        [[eosio::action]]
+        void erase();
+
         struct [[eosio::table]] bounties3
         {
             uint64_t key;
@@ -87,4 +90,4 @@ class [[eosio::contract]] bounty : public eosio::contract
         answer_index _answers;
 };
 
-EOSIO_DISPATCH(bounty, (bountyadd)(reclaim)(payout)(ansadd)(anstip)(ansbad));
+EOSIO_DISPATCH(bounty, (bountyadd)(reclaim)(payout)(ansadd)(anstip)(ansbad)(erase));
